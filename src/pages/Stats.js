@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
+import { NameContext } from "../context/NameContext";
+import { RegionContext } from "../context/RegionContext";
 
 const Stats = () => {
-  return <Wrapper>STATS</Wrapper>;
+  const [name, setName] = useContext(NameContext);
+  const [region, setRegion] = useContext(RegionContext);
+  return <Wrapper>{name}</Wrapper>;
 };
 
 const Wrapper = styled.div``;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styled from "styled-components";
 import { Redirect } from "react-router-dom";
 import Logo from "../components/Logo";
@@ -7,26 +7,47 @@ import TextField from "@material-ui/core/TextField";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import { withStyles } from "@material-ui/styles";
+import { NameContext } from "../context/NameContext";
+import { RegionContext } from "../context/RegionContext";
 
 const startup = (props) => {
   const [redir, setRedir] = useState(null);
+  const [name, setName] = useContext(NameContext);
+  const [region, setRegion] = useContext(RegionContext);
+
+  // for MUI select overwrite
   const { classes } = props;
 
   return (
     <Wrapper>
       <Logo className="logo" />
-      <form className="form">
+      <form
+        className="form"
+        action="GET"
+        onSubmit={() => {
+          console.log("HI");
+        }}
+      >
         <div>
           <TextField
             InputLabelProps={{ shrink: false }}
             className="input"
             placeholder="Summoner Name"
+            onChange={(e) => setName(e.target.value)}
+            onKeyUp={(e) => {
+              if (e.key === "Enter" && e.target.value !== "") {
+                setRedir(<Redirect to="/stats" />);
+              }
+            }}
           />
           <Select
             className="select"
             defaultValue="NA"
             classes={{
               icon: classes.icon,
+            }}
+            onChange={(e) => {
+              setRegion(e.target.value);
             }}
           >
             <MenuItem value={"NA"}>NA</MenuItem>
@@ -41,7 +62,15 @@ const startup = (props) => {
             <MenuItem value={"RU"}>RU</MenuItem>
             <MenuItem value={"JP"}>JP</MenuItem>
           </Select>
-          <Button className="btn">Search</Button>
+          <Button
+            onClick={() => {
+              console.log(name + " " + region);
+              setRedir(<Redirect to="/stats" />);
+            }}
+            className="btn"
+          >
+            Search
+          </Button>
         </div>
       </form>
       <p className="legal">
@@ -124,6 +153,7 @@ const Wrapper = styled.div`
   }
 `;
 
+// for MUI select overwrite
 const styles = (theme) => ({
   icon: {
     color: "white",

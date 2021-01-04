@@ -3,7 +3,11 @@ import styled from "styled-components";
 import Button from "@material-ui/core/Button";
 
 const ExportButton = (props) => {
-  return <StyledBtn className={props.className}>{props.children}</StyledBtn>;
+  return (
+    <StyledBtn onClick={props.onClick} className={props.className}>
+      {props.children}
+    </StyledBtn>
+  );
 };
 
 const StyledBtn = styled(Button).attrs((props) => {
