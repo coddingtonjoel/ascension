@@ -7,7 +7,17 @@ class AppMenu extends Menu {
   constructor(isDev) {
     super();
 
-    let template = [];
+    let template = [
+      {
+        label: "Edit",
+        submenu: [
+          { role: "cut" },
+          { role: "copy" },
+          { role: "paste" },
+          { role: "selectAll" },
+        ],
+      },
+    ];
 
     if (isMac) {
       template.unshift({

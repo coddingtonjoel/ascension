@@ -23,8 +23,12 @@
     "postpackage": "electron-packager ./ --out=./release --icon=assets/icons/mac.icns"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.2",
+    "@material-ui/styles": "^4.11.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
     "sass-loader": "^8.0.2",
     "styled-components": "^5.2.1"
   },

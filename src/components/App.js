@@ -1,11 +1,15 @@
 import React from "react";
+import "../app.css";
+import { HashRouter, Route, Switch } from "react-router-dom";
+import Startup from "../pages/Startup";
+import Stats from "../pages/Stats";
 
 const App = () => {
   return (
-    <div className="app">
-      <h1>Hello from Electron!</h1>
-      <p>React seems to be working just fine!</p>
-    </div>
+    <HashRouter>
+      <Route exact path="/" component={Startup} />
+      <Route exact path="/stats" component={Stats} />
+    </HashRouter>
   );
 };
 

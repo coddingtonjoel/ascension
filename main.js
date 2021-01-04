@@ -18,11 +18,11 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
+    minWidth: 700,
+    minHeight: 750,
     show: false,
     frame: true,
     backgroundColor: "#FFFFFF",
-    minWidth: 450,
-    minHeight: 475,
     icon: `${__dirname}/src/assets/ascension.png`,
     webPreferences: {
       nodeIntegration: true,
