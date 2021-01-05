@@ -2,6 +2,7 @@ const path = require("path");
 const url = require("url");
 const { app, BrowserWindow } = require("electron");
 const AppMenu = require("./AppMenu");
+const { session } = require("electron");
 
 let mainWindow;
 
@@ -27,6 +28,8 @@ function createMainWindow() {
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
+      webSecurity: false,
+      allowRunningInsecureContent: false,
     },
   });
 
@@ -57,7 +60,26 @@ function createMainWindow() {
   mainWindow.on("closed", () => (mainWindow = null));
 }
 
+// for CORS fix
+app.commandLine.appendSwitch("disable-site-isolation-trials");
+
 app.on("ready", () => {
+  const filter = {
+    urls: [
+      "https://na1.api.riotgames.com/*",
+      "https://br1.api.riotgames.com/*",
+      "https://euw1.api.riotgames.com/*",
+      "https://eun1.api.riotgames.com/*",
+      "https://jp1.api.riotgames.com/*",
+      "https://kr.api.riotgames.com/*",
+      "https://la1.api.riotgames.com/*",
+      "https://la2.api.riotgames.com/*",
+      "https://oc1.api.riotgames.com/*",
+      "https://ru.api.riotgames.com/*",
+      "https://tr1.api.riotgames.com/*",
+    ],
+  };
+
   createMainWindow();
 
   new AppMenu(isDev);

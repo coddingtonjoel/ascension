@@ -2,13 +2,14 @@ import React from "react";
 
 const Logo = (props) => {
   return (
-    <div className={props.className}>
+    <div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
         width="314"
         height="314"
         viewBox="0 0 650 650"
+        className={props.className}
       >
         <defs>
           <radialGradient
