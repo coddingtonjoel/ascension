@@ -14,14 +14,26 @@ const Profile = (props) => {
           <span>{props.summonerLevel}</span>
         </div>
         <div className="name-container">
-          <h1>{props.name}</h1>
-          <p>Current Rank: </p>
+          <h1>{props.name}YepThatsMahogany</h1>
+          <p>Current Solo/Duo Rank: {props.rank}</p>
         </div>
       </div>
-      <div className="bottom"></div>
+      <div className="bottom">
+        {props.masteryData.length > 0 ? (
+          props.masteryData.map((item) => {
+            return <Champion key={item.championId}>{item.name}</Champion>;
+          })
+        ) : (
+          <p>This summoner has no champion mastery data.</p>
+        )}
+      </div>
     </Wrapper>
   );
 };
+
+const Champion = styled.div`
+  font-size: 1rem;
+`;
 
 const Wrapper = styled.div`
   height: calc(100vh - 75px);
@@ -66,11 +78,17 @@ const Wrapper = styled.div`
       margin-left: 50px;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
+      transform: translateY(-16px);
 
       h1 {
         font-family: "OpenSans-SemiBold";
+      }
+
+      p {
+        font-family: "OpenSans-Light";
+        margin-top: 12px;
       }
     }
   }
