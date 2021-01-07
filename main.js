@@ -17,13 +17,14 @@ if (
 
 function createMainWindow() {
   mainWindow = new BrowserWindow({
-    width: 1280,
+    width: 1120,
     height: 800,
     minWidth: 700,
     minHeight: 750,
     show: false,
     frame: true,
     backgroundColor: "#FFFFFF",
+    resizable: false,
     icon: `${__dirname}/src/assets/ascension.png`,
     webPreferences: {
       nodeIntegration: true,

@@ -13,7 +13,7 @@ const Navbar = (props) => {
   const [name, setName] = useContext(NameContext);
   const [region, setRegion] = useContext(RegionContext);
   const [tempName, setTempName] = useState("");
-  const [tempRegion, setTempRegion] = useState(null);
+  const [tempRegion, setTempRegion] = useState("na1");
 
   // for MUI select overwrite
   const { classes } = props;
@@ -33,6 +33,7 @@ const Navbar = (props) => {
             onKeyUp={(e) => {
               if (e.key === "Enter" && tempName !== "") {
                 setName(e.target.value);
+                setRegion(tempRegion);
               }
             }}
           />

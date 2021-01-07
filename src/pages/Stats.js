@@ -19,20 +19,18 @@ const Stats = () => {
   let summonerLevel;
   let rank;
   let masteryStats;
+  let patch;
 
   // raw JSON data about champions from Riot's CDN
   let championJSON;
-
-  // const index = championJSON.find((champion) => champion.key == 125);
-  // console.log(index);
 
   useEffect(() => {
     setContent(<Loading />);
     // res => basic account information including summoner id
     axios
       .get(
-        `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/YepThatsMahogany?api_key=${process.env.KEY}`
-        //`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${process.env.KEY}`
+        //`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/YepThatsMahogany?api_key=${process.env.KEY}`
+        `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${process.env.KEY}`
       )
       .then((res) => {
         console.log(res);
@@ -70,43 +68,55 @@ const Stats = () => {
                 // list of all raw mastery with ids and unix time rather than consumable data for the user
                 let masteryData = res.data;
 
+                // get updated patch version so that all Data Dragon data is accurate
                 axios
-                  .get(
-                    "http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/champion.json"
-                  )
+                  .get("https://ddragon.leagueoflegends.com/api/versions.json")
                   .then((res) => {
-                    championJSON = res.data.data;
+                    patch = res.data[0];
 
-                    // add object attribute for each champion in mastery linking their champion id to their champion name and image
-                    // effectively links champions.json (from Riot's CDN) to this app
-                    masteryData.map((item) => {
-                      let name;
+                    axios
+                      .get(
+                        `http://ddragon.leagueoflegends.com/cdn/${patch}/data/en_US/champion.json`
+                      )
+                      .then((res) => {
+                        championJSON = res.data.data;
 
-                      for (const [key, value] of Object.entries(championJSON)) {
-                        if (value.key == item.championId) {
-                          name = value.name;
-                        }
-                      }
+                        // add object attribute for each champion in mastery linking their champion id to their champion name and image
+                        // effectively links champions.json (from Riot's CDN) to this app
+                        masteryData.map((item) => {
+                          let name;
+                          let iconName;
 
-                      // add champion name attribute to masteryData items
-                      // add champion image attribute to masteryData items
-                      item.img = `http://ddragon.leagueoflegends.com/cdn/11.1.1/img/champion/${name}.png`;
-                      item.name = name;
-                      return item;
-                    });
+                          for (const [key, value] of Object.entries(
+                            championJSON
+                          )) {
+                            if (value.key == item.championId) {
+                              name = value.name;
+                              iconName = value.image.full;
+                            }
+                          }
 
-                    console.log(masteryData);
+                          // add champion name attribute to masteryData items
+                          // add champion image attribute to masteryData items
+                          item.name = name;
+                          item.img = `http://ddragon.leagueoflegends.com/cdn/${patch}/img/champion/${iconName}`;
+                          return item;
+                        });
 
-                    setContent(
-                      <Profile
-                        masteryData={masteryData}
-                        id={id}
-                        name={name}
-                        summonerLevel={summonerLevel}
-                        profileIconId={profileIconId}
-                        rank={rank}
-                      />
-                    );
+                        console.log(masteryData);
+
+                        setContent(
+                          <Profile
+                            masteryData={masteryData}
+                            id={id}
+                            name={name}
+                            summonerLevel={summonerLevel}
+                            profileIconId={profileIconId}
+                            rank={rank}
+                          />
+                        );
+                      })
+                      .catch((err) => console.log(err));
                   })
                   .catch((err) => console.log(err));
               })
