@@ -94,6 +94,7 @@ const Wrapper = styled.div`
         position: relative;
         left: 46px;
         bottom: 8px;
+        user-select: none;
       }
     }
 
@@ -122,6 +123,7 @@ const Wrapper = styled.div`
       padding: 12px;
       position: absolute;
       right: 50px;
+      user-select: none;
 
       p {
         font-family: "Roboto";

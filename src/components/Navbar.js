@@ -90,7 +90,7 @@ const Wrapper = styled.div`
   height: 75px;
   position: relative;
   background-color: #262626;
-  box-shadow: 0 15px 12px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 15px 12px 0 rgba(0, 0, 0, 0.07);
   animation: ${slide} 0.7s ease;
 
   .logo {
