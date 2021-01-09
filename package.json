@@ -29,6 +29,7 @@
     "dotenv": "^8.2.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-number-format": "^4.4.4",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "sass-loader": "^8.0.2",

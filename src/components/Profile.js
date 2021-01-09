@@ -1,5 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import NumberFormat from "react-number-format";
+import Checkbox from "@material-ui/core/Checkbox";
 
 const Profile = (props) => {
   // gather top 5 champions to display images of
@@ -43,9 +51,51 @@ const Profile = (props) => {
       </div>
       <div className="bottom">
         {props.masteryData.length > 0 ? (
-          props.masteryData.map((item) => {
-            return <Champion key={item.championId}>{item.name}</Champion>;
-          })
+          <TableContainer>
+            <Table className="table" size={"small"}>
+              <TableHead>
+                <TableRow>
+                  <TableCell align={"center"}>Order</TableCell>
+                  <TableCell>Champion</TableCell>
+                  <TableCell align={"center"}>Level</TableCell>
+                  <TableCell align={"center"}>Mastery Points</TableCell>
+                  <TableCell align={"center"}>Chest</TableCell>
+                  <TableCell>Last Played</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {props.masteryData.map((item, index) => {
+                  let dateObj = new Date(item.lastPlayTime);
+                  let time = dateObj.toLocaleString();
+                  time = time.replace(",", " @");
+
+                  return (
+                    <TableRow key={item.championId}>
+                      <TableCell align={"center"}>{index + 1}</TableCell>
+                      <TableCell>{item.name}</TableCell>
+                      <TableCell align={"center"}>
+                        {item.championLevel}
+                      </TableCell>
+                      <TableCell align={"center"}>
+                        <NumberFormat
+                          thousandSeparator={true}
+                          value={item.championPoints}
+                          displayType={"text"}
+                        ></NumberFormat>
+                      </TableCell>
+                      <TableCell align={"center"}>
+                        <Checkbox
+                          checked={item.chestGranted}
+                          className="checkbox"
+                        />
+                      </TableCell>
+                      <TableCell>{time}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
         ) : (
           <p>This summoner has no champion mastery data.</p>
         )}
@@ -53,10 +103,6 @@ const Profile = (props) => {
     </Wrapper>
   );
 };
-
-const Champion = styled.div`
-  font-size: 1rem;
-`;
 
 const Wrapper = styled.div`
   height: calc(100vh - 75px);
@@ -145,6 +191,15 @@ const Wrapper = styled.div`
         justify-content: space-between;
       }
     }
+  }
+
+  .checkbox {
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .table {
+    overflow: scroll;
   }
 `;
 
