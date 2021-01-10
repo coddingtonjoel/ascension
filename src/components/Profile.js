@@ -152,6 +152,7 @@ const Profile = (props) => {
                         <Checkbox
                           checked={item.chestGranted}
                           className="checkbox"
+                          color="default"
                         />
                       </TableCell>
                       <TableCell>{time}</TableCell>
@@ -219,11 +220,13 @@ const Wrapper = styled.div`
       transform: translateY(-16px);
 
       h1 {
-        font-family: "OpenSans-SemiBold";
+        font-family: "OpenSans-SemiBold", "Open Sans", sans-serif;
+        font-weight: 600;
       }
 
       p {
-        font-family: "OpenSans-Light";
+        font-family: "OpenSans-Light", "Open Sans", sans-serif;
+        font-weight: 300;
         margin-top: 12px;
       }
     }
@@ -239,7 +242,8 @@ const Wrapper = styled.div`
       user-select: none;
 
       p {
-        font-family: "OpenSans-Light";
+        font-family: "OpenSans-Light", "Open Sans", sans-serif;
+        font-weight: 300;
         display: block;
         text-align: center;
         margin-bottom: 10px;
@@ -268,7 +272,7 @@ const Wrapper = styled.div`
   .table-container {
     width: 93%;
     margin: auto;
-    overflow: scroll;
+    overflow-y: scroll;
     height: 485px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
     border-radius: 4px;
