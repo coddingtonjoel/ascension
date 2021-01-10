@@ -20,7 +20,7 @@
     "start": "cross-env NODE_ENV=development webpack-dev-server --hot --host 0.0.0.0 --config=./webpack.dev.config.js --mode development",
     "build": "cross-env NODE_ENV=production webpack --config webpack.build.config.js --mode production",
     "package": "yarn run build",
-    "postpackage": "electron-packager ./ --out=./release --icon=assets/icons/mac.icns"
+    "postpackage": "electron-packager ./ --out=./release/mac --overwrite --platform=darwin --arch=x64 --prune=true --icon=src/assets/ascension.icns && electron-packager ./ --out=./release/win --overwrite --platform=win32 --arch=ia32 --prune=true --icon=src/assets/ascension.ico && electron-packager ./ --out=./release/linux --overwrite --platform=linux --arch=x64 --prune=true --icon=src/assets/ascension.png"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.2",
