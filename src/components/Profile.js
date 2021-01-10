@@ -51,23 +51,88 @@ const Profile = (props) => {
       </div>
       <div className="bottom">
         {props.masteryData.length > 0 ? (
-          <TableContainer>
-            <Table className="table" size={"small"}>
+          <div className="table-container">
+            <Table
+              stickyHeader
+              style={{ backgroundColor: "white" }}
+              className="table"
+              size={"small"}
+            >
               <TableHead>
                 <TableRow>
-                  <TableCell align={"center"}>Order</TableCell>
-                  <TableCell>Champion</TableCell>
-                  <TableCell align={"center"}>Level</TableCell>
-                  <TableCell align={"center"}>Mastery Points</TableCell>
-                  <TableCell align={"center"}>Chest</TableCell>
-                  <TableCell>Last Played</TableCell>
+                  <TableCell
+                    style={{
+                      color: "white",
+                      backgroundColor: "#525252",
+                      height: "35px",
+                    }}
+                    width={30}
+                    align={"center"}
+                  >
+                    Order
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      color: "white",
+                      backgroundColor: "#525252",
+                      height: "35px",
+                    }}
+                    width={50}
+                  >
+                    Champion
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      color: "white",
+                      backgroundColor: "#525252",
+                      height: "35px",
+                    }}
+                    width={30}
+                    align={"center"}
+                  >
+                    Level
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      color: "white",
+                      backgroundColor: "#525252",
+                      height: "35px",
+                    }}
+                    width={100}
+                    align={"left"}
+                  >
+                    Mastery Points
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      color: "white",
+                      backgroundColor: "#525252",
+                      height: "35px",
+                    }}
+                    width={30}
+                    align={"center"}
+                  >
+                    Chest
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      color: "white",
+                      backgroundColor: "#525252",
+                      height: "35px",
+                    }}
+                    width={150}
+                    align={"left"}
+                  >
+                    Last Played
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {props.masteryData.map((item, index) => {
                   let dateObj = new Date(item.lastPlayTime);
-                  let time = dateObj.toLocaleString();
+                  let time = dateObj.toLocaleDateString();
                   time = time.replace(",", " @");
+                  //time = time.slice(14, -2);
 
                   return (
                     <TableRow key={item.championId}>
@@ -76,7 +141,7 @@ const Profile = (props) => {
                       <TableCell align={"center"}>
                         {item.championLevel}
                       </TableCell>
-                      <TableCell align={"center"}>
+                      <TableCell align={"left"}>
                         <NumberFormat
                           thousandSeparator={true}
                           value={item.championPoints}
@@ -95,7 +160,7 @@ const Profile = (props) => {
                 })}
               </TableBody>
             </Table>
-          </TableContainer>
+          </div>
         ) : (
           <p>This summoner has no champion mastery data.</p>
         )}
@@ -114,6 +179,7 @@ const Wrapper = styled.div`
     justify-content: flex-start;
     margin-top: 30px;
     margin-left: 40px;
+    margin-bottom: 20px;
 
     .icon-container {
       width: 125px;
@@ -198,8 +264,12 @@ const Wrapper = styled.div`
     pointer-events: none;
   }
 
-  .table {
+  .table-container {
+    width: 90%;
+    margin: auto;
     overflow: scroll;
+    height: 430px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
   }
 `;
 
