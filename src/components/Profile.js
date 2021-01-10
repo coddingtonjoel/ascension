@@ -211,7 +211,7 @@ const Wrapper = styled.div`
     }
 
     .name-container {
-      margin-left: 50px;
+      margin-left: 60px;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -234,11 +234,12 @@ const Wrapper = styled.div`
       border-radius: 6px;
       padding: 12px;
       position: absolute;
-      right: 50px;
+      right: 40px;
+      transform: translateY(-8px);
       user-select: none;
 
       p {
-        font-family: "Roboto";
+        font-family: "OpenSans-Light";
         display: block;
         text-align: center;
         margin-bottom: 10px;
@@ -265,11 +266,12 @@ const Wrapper = styled.div`
   }
 
   .table-container {
-    width: 90%;
+    width: 93%;
     margin: auto;
     overflow: scroll;
-    height: 430px;
+    height: 485px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
   }
 `;
 
