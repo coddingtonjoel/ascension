@@ -147,6 +147,8 @@ const Wrapper = styled.div`
     opacity: 30%;
     font-size: 0.8rem;
     user-select: none;
+    font-family: "OpenSans-Light", "Open Sans", sans-serif;
+    font-weight: 300;
   }
 `;
 

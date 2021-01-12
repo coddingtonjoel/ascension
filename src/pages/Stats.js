@@ -29,8 +29,8 @@ const Stats = () => {
     // res => basic account information including summoner id
     axios
       .get(
-        //`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/YepThatsMahogany?api_key=${process.env.KEY}`
-        `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${process.env.KEY}`
+        `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/YepThatsMahogany?api_key=${process.env.KEY}`
+        //`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${process.env.KEY}`
       )
       .then((res) => {
         console.log(res);
