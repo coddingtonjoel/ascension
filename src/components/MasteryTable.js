@@ -36,14 +36,39 @@ const MasteryTable = (props) => {
     setAnchorEl(null);
   };
 
+  const sortByPoints = (a, b) => {
+    let comparison = 0;
+    if (a.championPoints > b.championPoints) {
+      comparison = 1;
+    } else if (a.championPoints < b.championPoints) {
+      comparison = -1;
+    }
+    return comparison;
+  };
+
+  // TODO issue with reversed mastery points per level
+  const sortByLevel = (a, b) => {
+    let comparison = 0;
+    if (a.championLevel > b.championLevel) {
+      if (a.championPoints > b.championPoints) {
+        comparison = 1;
+      }
+    } else if (a.championLevel < b.championLevel) {
+      if (a.championPoints < b.championPoints) {
+        comparison = -1;
+      }
+    }
+    return comparison;
+  };
+
   const sortByName = (a, b) => {
-    const nameA = a.name.toUpperCase();
-    const nameB = b.name.toUpperCase();
+    const tempA = a.name.toUpperCase();
+    const tempB = b.name.toUpperCase();
 
     let comparison = 0;
-    if (nameA > nameB) {
+    if (tempA > tempB) {
       comparison = 1;
-    } else if (nameA < nameB) {
+    } else if (tempA < tempB) {
       comparison = -1;
     }
     return comparison;
@@ -53,32 +78,36 @@ const MasteryTable = (props) => {
   useEffect(() => {
     if (sortValue === "Mastery Points") {
       console.log(sortValue);
-      // currentMasteryData.forEach((item, i) => {
-      //   let nextItem = currentMasteryData[i + 1];
-      //   if (item.championPoints < currentMasteryData[i + 1].championPoints) {
-      //     currentMasteryData.swap(i, i + 1);
-      //   }
-      // });
+      setLoading(true);
+      console.log(sortValue);
+      let temp = currentMasteryData;
+      temp = temp.sort(sortByPoints);
+      temp = temp.reverse();
+      setCurrentMasteryData(temp);
+      setTimeout(() => {
+        setLoading(false);
+      }, 100);
     } else if (sortValue === "Mastery Level") {
       console.log(sortValue);
-      // for (let i = 0; i < currentMasteryData.size; i++) {
-      //   if (
-      //     currentMasteryData[i].championLevel <
-      //     currentMasteryData[i + 1].championLevel
-      //   ) {
-      //     if (
-      //       currentMasteryData[i].championPoints <
-      //       currentMasteryData[i + 1].championPoints
-      //     ) {
-      //       currentMasteryData.swap(i, i + 1);
-      //     }
-      //   }
-      // }
+      console.log(sortValue);
+      setLoading(true);
+      console.log(sortValue);
+      let temp = currentMasteryData;
+      temp = temp.sort(sortByLevel);
+      temp = temp.reverse();
+      setCurrentMasteryData(temp);
+      setTimeout(() => {
+        setLoading(false);
+      }, 100);
     } else if (sortValue === "Champion Name") {
       setLoading(true);
       console.log(sortValue);
-      setCurrentMasteryData(currentMasteryData.sort(sortByName));
-      setLoading(false);
+      let temp = currentMasteryData;
+      temp = temp.sort(sortByName);
+      setCurrentMasteryData(temp);
+      setTimeout(() => {
+        setLoading(false);
+      }, 100);
     } else if (sortValue === "Chest Available") {
       console.log(sortValue);
     } else if (sortValue === "Recently Played") {
@@ -210,49 +239,37 @@ const MasteryTable = (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {!loading ? (
-            currentMasteryData.map((item, index) => {
-              let dateObj = new Date(item.lastPlayTime);
-              let time = dateObj.toLocaleDateString();
+          {currentMasteryData.map((item, index) => {
+            let dateObj = new Date(item.lastPlayTime);
+            let time = dateObj.toLocaleDateString();
 
-              return (
-                <TableRow key={item.championId}>
-                  <TableCell align={"center"}>{index + 1}</TableCell>
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell align={"center"}>{item.championLevel}</TableCell>
-                  <TableCell align={"left"}>
-                    <NumberFormat
-                      thousandSeparator={true}
-                      value={item.championPoints}
-                      displayType={"text"}
-                    ></NumberFormat>
-                  </TableCell>
-                  <TableCell align={"center"}>
-                    <Checkbox
-                      checked={item.chestGranted}
-                      className="checkbox"
-                      color="default"
-                    />
-                  </TableCell>
-                  <TableCell>{time}</TableCell>
-                </TableRow>
-              );
-            })
-          ) : (
-            <TableRow
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <TableCell height={430}>
-                <div className="progress">
-                  <CircularProgress color={"secondary"} />
-                </div>
-              </TableCell>
-            </TableRow>
-          )}
+            return (
+              <TableRow key={item.championId}>
+                <TableCell align={"center"} width={30}>
+                  {index + 1}
+                </TableCell>
+                <TableCell width={50}>{item.name}</TableCell>
+                <TableCell width={30} align={"center"}>
+                  {item.championLevel}
+                </TableCell>
+                <TableCell width={100} align={"left"}>
+                  <NumberFormat
+                    thousandSeparator={true}
+                    value={item.championPoints}
+                    displayType={"text"}
+                  ></NumberFormat>
+                </TableCell>
+                <TableCell width={30} align={"center"}>
+                  <Checkbox
+                    checked={item.chestGranted}
+                    className="checkbox"
+                    color="default"
+                  />
+                </TableCell>
+                <TableCell width={150}>{time}</TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </Wrapper>
