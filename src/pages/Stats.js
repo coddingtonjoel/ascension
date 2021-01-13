@@ -105,6 +105,12 @@ const Stats = () => {
 
                         console.log(masteryData);
 
+                        // gather top 5 champions to display images of
+                        let topFive = [];
+                        for (let i = 0; i < 5; i++) {
+                          topFive.push(masteryData[i]);
+                        }
+
                         setContent(
                           <Profile
                             masteryData={masteryData}
@@ -113,6 +119,7 @@ const Stats = () => {
                             summonerLevel={summonerLevel}
                             profileIconId={profileIconId}
                             rank={rank}
+                            topFive={topFive}
                           />
                         );
                       })
