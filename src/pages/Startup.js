@@ -28,7 +28,6 @@ const startup = (props) => {
             InputProps={{ spellCheck: false }}
             className="input"
             placeholder="Summoner Name"
-            // onChange={(e) => }
             onKeyUp={(e) => {
               setName(e.target.value);
               if (e.key === "Enter" && e.target.value !== "") {

@@ -10,10 +10,13 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Menu from "@material-ui/core/Menu";
 import Button from "@material-ui/core/Button";
 import FilterIcon from "@material-ui/icons/FilterList";
+import SearchIcon from "@material-ui/icons/ArrowForward";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import TextField from "@material-ui/core/TextField";
+import Fab from "@material-ui/core/Fab";
+import Dialog from "@material-ui/core/Dialog";
 
 const MasteryTable = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -21,7 +24,15 @@ const MasteryTable = (props) => {
     props.masteryData
   );
   const [sortValue, setSortValue] = useState("Mastery Points");
+  const [championValue, setChampionValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedChampion, setSelectedChampion] = useState(
+    props.masteryData[0]
+  );
+  const [selectedChampionTime, setSelectedChampionTime] = useState(null);
+  const [modalLoading, setModalLoading] = useState(true);
+  const [modalErrText, setModalErrText] = useState(null);
 
   // general handlers for sort menu
   const handleSortChange = (event) => {
@@ -46,21 +57,6 @@ const MasteryTable = (props) => {
     return comparison;
   };
 
-  // TODO issue with reversed mastery points per level
-  const sortByLevel = (a, b) => {
-    let comparison = 0;
-    if (a.championLevel > b.championLevel) {
-      if (a.championPoints > b.championPoints) {
-        comparison = 1;
-      }
-    } else if (a.championLevel < b.championLevel) {
-      if (a.championPoints < b.championPoints) {
-        comparison = -1;
-      }
-    }
-    return comparison;
-  };
-
   const sortByName = (a, b) => {
     const tempA = a.name.toUpperCase();
     const tempB = b.name.toUpperCase();
@@ -74,26 +70,34 @@ const MasteryTable = (props) => {
     return comparison;
   };
 
-  // update list order (currentMasteryData) when sortValue changes
+  const sortByChest = (a, b) => {
+    let comparison = 0;
+    if (a.chestGranted && !b.chestGranted) {
+      comparison = -1;
+    } else comparison = 1;
+    return comparison;
+  };
+
+  const sortByRecent = (a, b) => {
+    let comparison = 0;
+    if (a.lastPlayTime < b.lastPlayTime) {
+      comparison = 1;
+    } else if (a.lastPlayTime > b.lastPlayTime) {
+      comparison = -1;
+    }
+    return comparison;
+  };
+
+  const findChampion = (a) => {
+    return a.name.toUpperCase() === championValue.toUpperCase();
+  };
+
+  // update list order (currentMasteryData) when sortValue or championValue changes
   useEffect(() => {
     if (sortValue === "Mastery Points") {
-      console.log(sortValue);
       setLoading(true);
-      console.log(sortValue);
-      let temp = currentMasteryData;
+      let temp = props.masteryData;
       temp = temp.sort(sortByPoints);
-      temp = temp.reverse();
-      setCurrentMasteryData(temp);
-      setTimeout(() => {
-        setLoading(false);
-      }, 100);
-    } else if (sortValue === "Mastery Level") {
-      console.log(sortValue);
-      console.log(sortValue);
-      setLoading(true);
-      console.log(sortValue);
-      let temp = currentMasteryData;
-      temp = temp.sort(sortByLevel);
       temp = temp.reverse();
       setCurrentMasteryData(temp);
       setTimeout(() => {
@@ -101,19 +105,53 @@ const MasteryTable = (props) => {
       }, 100);
     } else if (sortValue === "Champion Name") {
       setLoading(true);
-      console.log(sortValue);
-      let temp = currentMasteryData;
+      let temp = props.masteryData;
       temp = temp.sort(sortByName);
       setCurrentMasteryData(temp);
       setTimeout(() => {
         setLoading(false);
       }, 100);
-    } else if (sortValue === "Chest Available") {
-      console.log(sortValue);
+    } else if (sortValue === "Chest Granted") {
+      setLoading(true);
+      let temp = props.masteryData;
+      temp = temp.sort(sortByPoints);
+      temp = temp.reverse();
+      temp = temp.sort(sortByChest);
+      setCurrentMasteryData(temp);
+      setTimeout(() => {
+        setLoading(false);
+      }, 100);
     } else if (sortValue === "Recently Played") {
-      console.log(sortValue);
+      setLoading(true);
+      let temp = props.masteryData;
+      temp = temp.sort(sortByRecent);
+      setCurrentMasteryData(temp);
+      setTimeout(() => {
+        setLoading(false);
+      }, 100);
     }
   }, [sortValue]);
+
+  useEffect(() => {
+    if (championValue !== "") {
+      let temp = props.masteryData;
+      temp = temp.find(findChampion);
+      if (temp !== undefined) {
+        setSelectedChampion(temp);
+        setModalLoading(false);
+      } else {
+        setModalErrText("Not found.");
+      }
+    }
+  }, [championValue]);
+
+  useEffect(() => {
+    if (selectedChampion !== null) {
+      let dateObj = new Date(selectedChampion.lastPlayTime);
+      setSelectedChampionTime(dateObj.toLocaleDateString());
+    }
+    setModalLoading(false);
+  }, [selectedChampion]);
 
   return (
     <Wrapper>
@@ -142,19 +180,14 @@ const MasteryTable = (props) => {
             label="Mastery Points"
           />
           <FormControlLabel
-            value="Mastery Level"
-            control={<Radio color="default" onClick={handleMenuClose} />}
-            label="Mastery Level"
-          />
-          <FormControlLabel
             value="Champion Name"
             control={<Radio color="default" onClick={handleMenuClose} />}
             label="Champion Name"
           />
           <FormControlLabel
-            value="Chest Available"
+            value="Chest Granted"
             control={<Radio color="default" onClick={handleMenuClose} />}
-            label="Chest Available"
+            label="Chest Granted"
           />
           <FormControlLabel
             value="Recently Played"
@@ -162,6 +195,60 @@ const MasteryTable = (props) => {
             label="Recently Played"
           />
         </RadioGroup>
+        <div className="input">
+          <TextField
+            onKeyUp={(e) => {
+              if (e.key === "Enter") {
+                if (selectedChampion !== undefined && e.target.value !== "") {
+                  setModalOpen(true);
+                }
+              }
+            }}
+            style={{
+              bottom: "5px",
+              left: "36px",
+              paddingBottom: "20px",
+              width: "48%",
+            }}
+            InputLabelProps={{ shrink: false }}
+            InputProps={{ spellCheck: false }}
+            placeholder={"Champion"}
+            onBlur={(e) => {
+              setModalLoading(true);
+              if (championValue == e.target.value) {
+                if (championValue !== "") {
+                  let temp = currentMasteryData;
+                  temp = temp.find(findChampion);
+                  if (temp !== undefined) {
+                    setSelectedChampion(temp);
+                    setModalLoading(false);
+                  } else {
+                    setModalErrText("Not found.");
+                  }
+                }
+              } else {
+                setChampionValue(e.target.value);
+              }
+            }}
+          />
+          <Fab
+            onClick={() => {
+              if (selectedChampion !== undefined) {
+                setModalLoading(true);
+                setModalOpen(true);
+              }
+            }}
+            style={{
+              height: "36px",
+              width: "36px",
+              bottom: "6px",
+              transform: "translateX(45px)",
+              boxShadow: "none",
+            }}
+          >
+            <SearchIcon style={{ opacity: 0.8 }} />
+          </Fab>
+        </div>
       </Menu>
       <Table
         stickyHeader
@@ -261,9 +348,11 @@ const MasteryTable = (props) => {
                 </TableCell>
                 <TableCell width={30} align={"center"}>
                   <Checkbox
+                    style={{ pointerEvents: "none", userSelect: "none" }}
                     checked={item.chestGranted}
                     className="checkbox"
                     color="default"
+                    disabled
                   />
                 </TableCell>
                 <TableCell width={150}>{time}</TableCell>
@@ -272,6 +361,125 @@ const MasteryTable = (props) => {
           })}
         </TableBody>
       </Table>
+      {!modalLoading ? (
+        <Dialog
+          open={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            setModalErrText(null);
+          }}
+        >
+          <Table
+            stickyHeader
+            style={{ backgroundColor: "white" }}
+            className="table"
+            size={"small"}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell
+                  style={{
+                    color: "white",
+                    backgroundColor: "#525252",
+                    height: "35px",
+                  }}
+                >
+                  Champion
+                </TableCell>
+                <TableCell
+                  style={{
+                    color: "white",
+                    backgroundColor: "#525252",
+                    height: "35px",
+                  }}
+                  align={"center"}
+                >
+                  Level
+                </TableCell>
+                <TableCell
+                  style={{
+                    color: "white",
+                    backgroundColor: "#525252",
+                    height: "35px",
+                  }}
+                  align={"left"}
+                >
+                  Mastery Points
+                </TableCell>
+                <TableCell
+                  style={{
+                    color: "white",
+                    backgroundColor: "#525252",
+                    height: "35px",
+                  }}
+                  align={"center"}
+                >
+                  Chest
+                </TableCell>
+                <TableCell
+                  style={{
+                    color: "white",
+                    backgroundColor: "#525252",
+                    height: "35px",
+                  }}
+                  align={"left"}
+                >
+                  Last Played
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell align={"center"}>{selectedChampion.name}</TableCell>
+                <TableCell align={"center"}>
+                  {selectedChampion.championLevel}
+                </TableCell>
+                <TableCell align={"center"}>
+                  <NumberFormat
+                    thousandSeparator={true}
+                    value={selectedChampion.championPoints}
+                    displayType={"text"}
+                  ></NumberFormat>
+                </TableCell>
+                <TableCell align={"center"}>
+                  <Checkbox
+                    checked={selectedChampion.chestGranted}
+                    className="checkbox"
+                    color="default"
+                    disabled
+                  />
+                </TableCell>
+                <TableCell align={"center"}>{selectedChampionTime}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Dialog>
+      ) : (
+        <Dialog
+          open={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            setModalErrText(null);
+          }}
+        >
+          {modalErrText === null ? (
+            <span></span>
+          ) : (
+            <span
+              style={{
+                height: "107px",
+                width: "506px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "1.1rem",
+              }}
+            >
+              Champion not found.
+            </span>
+          )}
+        </Dialog>
+      )}
     </Wrapper>
   );
 };
@@ -305,17 +513,10 @@ const Wrapper = styled.div`
     margin: 100px !important;
   }
 
-  .loading {
-    height: 100%;
-    width: 100%;
-    position: relative;
-  }
-
-  .progress {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  p.err {
+    color: red;
+    font-size: 0.7rem;
+    margin-bottom: 10px;
   }
 `;
 

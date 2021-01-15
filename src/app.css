@@ -43,3 +43,11 @@ body {
   font-family: "Roboto";
   overflow: hidden;
 }
+
+.MuiInput-underline:after {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.MuiCircularProgress-svg {
+  color: #333;
+}

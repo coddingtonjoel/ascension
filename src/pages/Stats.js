@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import styled from "styled-components";
 import { NameContext } from "../context/NameContext";
 import { RegionContext } from "../context/RegionContext";
 require("dotenv").config();
@@ -29,8 +28,8 @@ const Stats = () => {
     // res => basic account information including summoner id
     axios
       .get(
-        `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/YepThatsMahogany?api_key=${process.env.KEY}`
-        //`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${process.env.KEY}`
+        //`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/YepThatsMahogany?api_key=${process.env.KEY}`
+        `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${process.env.KEY}`
       )
       .then((res) => {
         console.log(res);
@@ -159,13 +158,11 @@ const Stats = () => {
   }, [name, region]);
 
   return (
-    <Wrapper>
+    <div>
       <Navbar />
       {content}
-    </Wrapper>
+    </div>
   );
 };
-
-const Wrapper = styled.div``;
 
 export default Stats;
