@@ -27,12 +27,11 @@ const MasteryTable = (props) => {
   const [championValue, setChampionValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedChampion, setSelectedChampion] = useState(
-    props.masteryData[0]
-  );
-  const [selectedChampionTime, setSelectedChampionTime] = useState(null);
+  const [selectedChampions, setSelectedChampions] = useState([
+    props.masteryData[0],
+  ]);
+  const [selectedChampionsTime, setSelectedChampionsTime] = useState(null);
   const [modalLoading, setModalLoading] = useState(true);
-  const [modalErrText, setModalErrText] = useState(null);
 
   // general handlers for sort menu
   const handleSortChange = (event) => {
@@ -135,23 +134,32 @@ const MasteryTable = (props) => {
   useEffect(() => {
     if (championValue !== "") {
       let temp = props.masteryData;
-      temp = temp.find(findChampion);
-      if (temp !== undefined) {
-        setSelectedChampion(temp);
+      let arr = [];
+      props.masteryData.forEach((item) => {
+        let name = item.name.toUpperCase();
+        if (name.includes(championValue.toUpperCase())) {
+          arr.push(item);
+        }
+      });
+      if (arr !== []) {
+        console.log(arr);
+        setSelectedChampions(arr);
         setModalLoading(false);
-      } else {
-        setModalErrText("Not found.");
       }
     }
   }, [championValue]);
 
   useEffect(() => {
-    if (selectedChampion !== null) {
-      let dateObj = new Date(selectedChampion.lastPlayTime);
-      setSelectedChampionTime(dateObj.toLocaleDateString());
+    if (selectedChampions !== []) {
+      let arr = [];
+      selectedChampions.forEach((item) => {
+        let dateObj = new Date(item.lastPlayTime);
+        arr.push(dateObj.toLocaleDateString());
+      });
+      setSelectedChampionsTime(arr);
     }
     setModalLoading(false);
-  }, [selectedChampion]);
+  }, [selectedChampions]);
 
   return (
     <Wrapper>
@@ -199,7 +207,7 @@ const MasteryTable = (props) => {
           <TextField
             onKeyUp={(e) => {
               if (e.key === "Enter") {
-                if (selectedChampion !== undefined && e.target.value !== "") {
+                if (selectedChampions !== [] && e.target.value !== "") {
                   setModalOpen(true);
                 }
               }
@@ -217,13 +225,17 @@ const MasteryTable = (props) => {
               setModalLoading(true);
               if (championValue == e.target.value) {
                 if (championValue !== "") {
-                  let temp = currentMasteryData;
-                  temp = temp.find(findChampion);
-                  if (temp !== undefined) {
-                    setSelectedChampion(temp);
+                  let temp = props.masteryData;
+                  let arr = [];
+                  props.masteryData.forEach((item) => {
+                    let name = item.name.toUpperCase();
+                    if (name.includes(championValue.toUpperCase())) {
+                      arr.push(item);
+                    }
+                  });
+                  if (arr !== []) {
+                    setSelectedChampions(arr);
                     setModalLoading(false);
-                  } else {
-                    setModalErrText("Not found.");
                   }
                 }
               } else {
@@ -233,9 +245,26 @@ const MasteryTable = (props) => {
           />
           <Fab
             onClick={() => {
-              if (selectedChampion !== undefined) {
+              if (selectedChampions !== []) {
                 setModalLoading(true);
-                setModalOpen(true);
+                if (championValue == e.target.value) {
+                  if (championValue !== "") {
+                    let temp = props.masteryData;
+                    let arr = [];
+                    props.masteryData.forEach((item) => {
+                      let name = item.name.toUpperCase();
+                      if (name.includes(championValue.toUpperCase())) {
+                        arr.push(item);
+                      }
+                    });
+                    if (arr !== []) {
+                      setSelectedChampions(arr);
+                      setModalLoading(false);
+                    }
+                  }
+                } else {
+                  setChampionValue(e.target.value);
+                }
               }
             }}
             style={{
@@ -361,12 +390,12 @@ const MasteryTable = (props) => {
           })}
         </TableBody>
       </Table>
-      {!modalLoading ? (
+      {!modalLoading && selectedChampions !== [] ? (
         <Dialog
+          // style={{ width: "1000px", margin: "auto" }}
           open={modalOpen}
           onClose={() => {
             setModalOpen(false);
-            setModalErrText(null);
           }}
         >
           <Table
@@ -429,57 +458,36 @@ const MasteryTable = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell align={"center"}>{selectedChampion.name}</TableCell>
-                <TableCell align={"center"}>
-                  {selectedChampion.championLevel}
-                </TableCell>
-                <TableCell align={"center"}>
-                  <NumberFormat
-                    thousandSeparator={true}
-                    value={selectedChampion.championPoints}
-                    displayType={"text"}
-                  ></NumberFormat>
-                </TableCell>
-                <TableCell align={"center"}>
-                  <Checkbox
-                    checked={selectedChampion.chestGranted}
-                    className="checkbox"
-                    color="default"
-                    disabled
-                  />
-                </TableCell>
-                <TableCell align={"center"}>{selectedChampionTime}</TableCell>
-              </TableRow>
+              {selectedChampions.map((item, index) => {
+                return (
+                  <TableRow key={item.championId}>
+                    <TableCell align={"center"}>{item.name}</TableCell>
+                    <TableCell align={"center"}>{item.championLevel}</TableCell>
+                    <TableCell align={"center"}>
+                      <NumberFormat
+                        thousandSeparator={true}
+                        value={item.championPoints}
+                        displayType={"text"}
+                      ></NumberFormat>
+                    </TableCell>
+                    <TableCell align={"center"}>
+                      <Checkbox
+                        checked={item.chestGranted}
+                        className="checkbox"
+                        color="default"
+                        disabled
+                      />
+                    </TableCell>
+                    <TableCell align={"center"}>
+                      {selectedChampionsTime[index]}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </Dialog>
-      ) : (
-        <Dialog
-          open={modalOpen}
-          onClose={() => {
-            setModalOpen(false);
-            setModalErrText(null);
-          }}
-        >
-          {modalErrText === null ? (
-            <span></span>
-          ) : (
-            <span
-              style={{
-                height: "107px",
-                width: "506px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "1.1rem",
-              }}
-            >
-              Champion not found.
-            </span>
-          )}
-        </Dialog>
-      )}
+      ) : null}
     </Wrapper>
   );
 };
