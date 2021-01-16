@@ -33,7 +33,7 @@ const Profile = (props) => {
           <h1>{props.name}</h1>
           <p>Current Solo/Duo Rank: {props.rank}</p>
         </div>
-        {props.topFive.length > 0 ? (
+        {props.topFive[0] !== undefined ? (
           <div className="five-container">
             <p>Highest Mastery Champions</p>
             <div className="five-container-flex">
@@ -50,10 +50,12 @@ const Profile = (props) => {
         ) : null}
       </div>
       <div className="bottom">
-        {masteryData.length > 0 ? (
+        {masteryData[0] !== undefined ? (
           <MasteryTable masteryData={masteryData} />
         ) : (
-          <p>This summoner has no champion mastery data.</p>
+          <p style={{ textAlign: "center" }}>
+            This summoner has no champion mastery data.
+          </p>
         )}
       </div>
     </Wrapper>

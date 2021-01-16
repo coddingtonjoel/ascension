@@ -21,9 +21,9 @@ const Stats = () => {
 
   let id;
   let profileIconId;
+  let summonerName;
   let summonerLevel;
   let rank;
-  let masteryStats;
   let patch;
 
   // raw JSON data about champions from Riot's CDN
@@ -32,7 +32,8 @@ const Stats = () => {
   useEffect(() => {
     setContent(<Loading />);
     axios
-      .get("http://localhost:3001/riot-key", {
+      // .get("http://localhost:3001/riot-key", {
+      .get("https://joelc-dev-api.herokuapp.com/riot-key", {
         headers: {
           authorization: temp2,
         },
@@ -41,14 +42,15 @@ const Stats = () => {
         // res => basic account information including summoner id
         axios
           .get(
-            `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/YepThatsMahogany?api_key=${responseData.data}`
-            //`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${responseData.data}`
+            //`https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/YepThatsMahogany?api_key=${responseData.data}`
+            `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${responseData.data}`
           )
           .then((res) => {
             console.log(res);
             id = res.data.id;
             profileIconId = res.data.profileIconId;
             summonerLevel = res.data.summonerLevel;
+            summonerName = res.data.name;
 
             // res => summoner's ranked information
             axios
@@ -97,39 +99,45 @@ const Stats = () => {
 
                             // add object attribute for each champion in mastery linking their champion id to their champion name and image
                             // effectively links champions.json (from Riot's CDN) to this app
-                            masteryData.map((item) => {
-                              let name;
-                              let iconName;
+                            try {
+                              masteryData.map((item) => {
+                                let name;
+                                let iconName;
 
-                              for (const [key, value] of Object.entries(
-                                championJSON
-                              )) {
-                                if (value.key == item.championId) {
-                                  name = value.name;
-                                  iconName = value.image.full;
+                                for (const [key, value] of Object.entries(
+                                  championJSON
+                                )) {
+                                  if (value.key == item.championId) {
+                                    name = value.name;
+                                    iconName = value.image.full;
+                                  }
                                 }
-                              }
 
-                              // add champion name attribute to masteryData items
-                              // add champion image attribute to masteryData items
-                              item.name = name;
-                              item.img = `http://ddragon.leagueoflegends.com/cdn/${patch}/img/champion/${iconName}`;
-                              return item;
-                            });
+                                // add champion name attribute to masteryData items
+                                // add champion image attribute to masteryData items
+                                item.name = name;
+                                item.img = `http://ddragon.leagueoflegends.com/cdn/${patch}/img/champion/${iconName}`;
+                                return item;
+                              });
+                            } catch (err) {
+                              console.log(err);
+                            }
 
                             console.log(masteryData);
 
                             // gather top 5 champions to display images of
                             let topFive = [];
-                            for (let i = 0; i < 5; i++) {
-                              topFive.push(masteryData[i]);
+                            if (masteryData !== []) {
+                              for (let i = 0; i < 5; i++) {
+                                topFive.push(masteryData[i]);
+                              }
                             }
 
                             setContent(
                               <Profile
                                 masteryData={masteryData}
                                 id={id}
-                                name={name}
+                                name={summonerName}
                                 summonerLevel={summonerLevel}
                                 profileIconId={profileIconId}
                                 rank={rank}
