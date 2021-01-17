@@ -100,6 +100,8 @@ const Wrapper = styled.div`
         left: 46px;
         bottom: 8px;
         user-select: none;
+        font-family: "OpenSans-Light", "Open Sans", sans-serif;
+        font-weight: 300;
       }
     }
 
