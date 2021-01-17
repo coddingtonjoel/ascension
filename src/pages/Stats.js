@@ -7,17 +7,12 @@ import axios from "axios";
 import Profile from "../components/Profile";
 import Loading from "../components/Loading";
 import NotFound from "../components/NotFound";
-import CryptoAES from "crypto-js/aes";
-import CryptoENC from "crypto-js/enc-utf8";
-import envVar from "../context/env-vars.json";
+import { temporary1, temporary2 } from "../context/temp";
 
 const Stats = () => {
   const [name, setName] = useContext(NameContext);
   const [region, setRegion] = useContext(RegionContext);
   const [content, setContent] = useState(<Loading />);
-
-  let temp2 = CryptoAES.decrypt(envVar.temp, "deleteYasuoFromLoL");
-  temp2 = temp2.toString(CryptoENC);
 
   let id;
   let profileIconId;
@@ -32,10 +27,10 @@ const Stats = () => {
   useEffect(() => {
     setContent(<Loading />);
     axios
-      // .get("http://localhost:3001/riot-key", {
-      .get("https://joelc-dev-api.herokuapp.com/riot-key", {
-        headers: {
-          authorization: temp2,
+      .get("https://joelc-dev-api.herokuapp.com/access", {
+        auth: {
+          username: temporary1,
+          password: temporary2,
         },
       })
       .then((responseData) => {
