@@ -1,12 +1,28 @@
 const path = require("path");
 const url = require("url");
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, autoUpdater, dialog } = require("electron");
 const AppMenu = require("./AppMenu");
-const { session } = require("electron");
+const electronInstaller = require("electron-winstaller");
 
 let mainWindow;
 
 let isDev = false;
+
+const createWinstaller = async () => {
+  console.log("creating...");
+  try {
+    await electronInstaller.createWindowsInstaller({
+      appDirectory: "release/win/Ascension-win32-ia32",
+      outputDirectory: "release/ascension-installer",
+      authors: "Joel Coddington",
+      exe: "ascension.exe",
+    });
+    console.log("It worked!");
+  } catch (e) {
+    console.log(`No dice: ${e.message}`);
+  }
+  console.log("done!");
+};
 
 if (
   process.env.NODE_ENV !== undefined &&
@@ -89,6 +105,7 @@ app.on("ready", () => {
 // additional macOS settings for standarization
 
 app.on("window-all-closed", () => {
+  createWinstaller();
   if (process.platform !== "darwin") {
     app.quit();
   }
