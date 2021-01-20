@@ -1,28 +1,17 @@
 const path = require("path");
 const url = require("url");
-const { app, BrowserWindow, autoUpdater, dialog } = require("electron");
+const { app, BrowserWindow, autoUpdater } = require("electron");
 const AppMenu = require("./AppMenu");
-const electronInstaller = require("electron-winstaller");
 
 let mainWindow;
 
 let isDev = false;
 
-const createWinstaller = async () => {
-  console.log("creating...");
-  try {
-    await electronInstaller.createWindowsInstaller({
-      appDirectory: "release/win/Ascension-win32-ia32",
-      outputDirectory: "release/ascension-installer",
-      authors: "Joel Coddington",
-      exe: "ascension.exe",
-    });
-    console.log("It worked!");
-  } catch (e) {
-    console.log(`No dice: ${e.message}`);
-  }
-  console.log("done!");
-};
+// this should be placed at top of main.js to handle setup events quickly
+if (handleSquirrelEvent(app)) {
+  // squirrel event handled and app will exit in 1000ms, so don't do anything else
+  return;
+}
 
 if (
   process.env.NODE_ENV !== undefined &&
@@ -105,7 +94,6 @@ app.on("ready", () => {
 // additional macOS settings for standarization
 
 app.on("window-all-closed", () => {
-  createWinstaller();
   if (process.platform !== "darwin") {
     app.quit();
   }
@@ -119,3 +107,54 @@ app.on("activate", () => {
 
 // Stop error
 app.allowRendererProcessReuse = true;
+
+// placed at the end of main.js
+function handleSquirrelEvent(application) {
+  if (process.argv.length === 1) {
+    return false;
+  }
+  const ChildProcess = require("child_process");
+  const path = require("path");
+  const appFolder = path.resolve(process.execPath, "..");
+  const rootAtomFolder = path.resolve(appFolder, "..");
+  const updateDotExe = path.resolve(path.join(rootAtomFolder, "Update.exe"));
+  const exeName = path.basename(process.execPath);
+  const spawn = function (command, args) {
+    let spawnedProcess, error;
+    try {
+      spawnedProcess = ChildProcess.spawn(command, args, {
+        detached: true,
+      });
+    } catch (error) {}
+    return spawnedProcess;
+  };
+  const spawnUpdate = function (args) {
+    return spawn(updateDotExe, args);
+  };
+  const squirrelEvent = process.argv[1];
+  switch (squirrelEvent) {
+    case "--squirrel-install":
+    case "--squirrel-updated":
+      // Optionally do things such as:
+      // - Add your .exe to the PATH
+      // - Write to the registry for things like file associations and
+      //   explorer context menus
+      // Install desktop and start menu shortcuts
+      spawnUpdate(["--createShortcut", exeName]);
+      setTimeout(application.quit, 1000);
+      return true;
+    case "--squirrel-uninstall":
+      // Undo anything you did in the --squirrel-install and
+      // --squirrel-updated handlers
+      // Remove desktop and start menu shortcuts
+      spawnUpdate(["--removeShortcut", exeName]);
+      setTimeout(application.quit, 1000);
+      return true;
+    case "--squirrel-obsolete":
+      // This is called on the outgoing version of your app before
+      // we update to the new version - it's the opposite of
+      // --squirrel-updated
+      application.quit();
+      return true;
+  }
+}

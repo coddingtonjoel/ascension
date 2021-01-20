@@ -20,7 +20,9 @@
     "start": "cross-env NODE_ENV=development webpack-dev-server --hot --host 0.0.0.0 --config=./webpack.dev.config.js --mode development",
     "build": "cross-env NODE_ENV=production webpack --config webpack.build.config.js --mode production",
     "package": "yarn run build",
-    "postpackage": "electron-packager ./ --out=./release/mac --overwrite --ignore=^/release --platform=darwin --arch=x64 --prune=true --icon=src/assets/ascension.icns && electron-packager ./ --out=./release/win --overwrite --ignore=^/release --platform=win32 --arch=ia32 --prune=true --icon=src/assets/ascension.ico"
+    "postpackage": "electron-packager ./ --out=./release/mac --overwrite --ignore=^/release --ignore=^/release --electron-version 9.4.0 --platform=darwin --arch=x64 --prune=true --icon=src/assets/ascension.icns && electron-packager ./ --out=./release/win --overwrite --ignore=^/release --electron-version 9.4.0 --platform=win32 --arch=x64 --prune=true --icon=src/assets/ascension.ico",
+    "windows-installer": "node ./release/installers/windows/createInstaller.js",
+    "mac-installer": "electron-installer-dmg ./release/mac/Ascension-darwin-x64/Ascension.app Ascension --out=release/installers/mac --background=src/assets/install.png --icon=src/assets/ascension.png --title=Ascension --overwrite"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.2",
@@ -29,6 +31,7 @@
     "axios": "^0.21.1",
     "crypto-js": "^4.0.0",
     "dotenv": "^8.2.0",
+    "electron-squirrel-startup": "^1.0.0",
     "electron-winstaller": "^4.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
