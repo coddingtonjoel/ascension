@@ -33,6 +33,9 @@ const MasteryTable = (props) => {
   const [selectedChampionsTime, setSelectedChampionsTime] = useState(null);
   const [modalLoading, setModalLoading] = useState(true);
 
+  // used to track textfield value for Fab button
+  const [tempChampionValue, setTempChampionValue] = useState("");
+
   // general handlers for sort menu
   const handleSortChange = (event) => {
     setSortValue(event.target.value);
@@ -222,6 +225,7 @@ const MasteryTable = (props) => {
             InputProps={{ spellCheck: false }}
             placeholder={"Champion"}
             onBlur={(e) => {
+              setTempChampionValue(e.target.value);
               setModalLoading(true);
               if (championValue == e.target.value) {
                 if (championValue !== "") {
@@ -245,26 +249,8 @@ const MasteryTable = (props) => {
           />
           <Fab
             onClick={() => {
-              if (selectedChampions !== []) {
-                setModalLoading(true);
-                if (championValue == e.target.value) {
-                  if (championValue !== "") {
-                    let temp = props.masteryData;
-                    let arr = [];
-                    props.masteryData.forEach((item) => {
-                      let name = item.name.toUpperCase();
-                      if (name.includes(championValue.toUpperCase())) {
-                        arr.push(item);
-                      }
-                    });
-                    if (arr !== []) {
-                      setSelectedChampions(arr);
-                      setModalLoading(false);
-                    }
-                  }
-                } else {
-                  setChampionValue(e.target.value);
-                }
+              if (selectedChampions !== [] && tempChampionValue !== "") {
+                setModalOpen(true);
               }
             }}
             style={{
