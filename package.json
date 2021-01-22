@@ -20,8 +20,8 @@
     "start": "cross-env NODE_ENV=development webpack-dev-server --hot --host 0.0.0.0 --config=./webpack.dev.config.js --mode development",
     "build": "cross-env NODE_ENV=production webpack --config webpack.build.config.js --mode production",
     "package": "yarn run build",
-    "postpackage": "electron-packager ./ --out=./release/mac --overwrite --ignore=^/release --ignore=^/release --electron-version 9.4.0 --platform=darwin --arch=x64 --prune=true --icon=src/assets/ascension.icns && electron-packager ./ --out=./release/win --overwrite --ignore=^/release --electron-version 9.4.0 --platform=win32 --arch=x64 --prune=true --icon=src/assets/ascension.ico",
-    "windows-installer": "node ./release/installers/windows/createInstaller.js",
+    "postpackage": "electron-packager ./ --out=./release/mac --overwrite --ignore=^/release --ignore=^/release --electron-version 9.4.0 --platform=darwin --arch=x64 --prune=true --icon=src/assets/ascension.icns && electron-packager ./ --out=./release/win --overwrite --asar --ignore=^/release --electron-version 9.4.0 --platform=win32 --arch=x64 --prune=true --icon=src/assets/ascension.ico",
+    "windows-installer": "node ./src/scripts/createinstaller.js",
     "mac-installer": "electron-installer-dmg ./release/mac/Ascension-darwin-x64/Ascension.app Ascension --out=release/installers/mac --background=src/assets/install.png --icon=src/assets/ascension.png --title=Ascension --overwrite"
   },
   "dependencies": {
