@@ -104,7 +104,7 @@ app.on("ready", () => {
             buttons: ["Download Update", "Later"],
             title: "Application Update",
             message: "New Update for Ascension",
-            detail: `A new version of Ascension has been released.\nCurrent version: ${app.getVersion()}.\nNewer version: ${
+            detail: `A new version of Ascension has been released.\nCurrent version: v${app.getVersion()}.\nNewer version: ${
               res.data.name
             }.`,
           };
