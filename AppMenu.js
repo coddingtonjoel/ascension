@@ -1,4 +1,6 @@
-const { Menu } = require("electron");
+const { Menu, app } = require("electron");
+const openAboutWindow = require("about-window").default;
+const path = require("path");
 
 const isMac = process.platform === "darwin";
 
@@ -9,19 +11,62 @@ class AppMenu extends Menu {
 
     let template = [
       {
-        label: "Edit",
-        submenu: [
-          { role: "cut" },
-          { role: "copy" },
-          { role: "paste" },
-          { role: "selectAll" },
-        ],
+        role: "fileMenu",
+      },
+      {
+        role: "editMenu",
       },
     ];
 
     if (isMac) {
       template.unshift({
-        role: "appMenu",
+        label: app.getName(),
+        submenu: [
+          {
+            label: "About Ascension",
+            click: () => {
+              openAboutWindow({
+                icon_path: path.join(
+                  __dirname,
+                  "src",
+                  "assets",
+                  "ascension.png"
+                ),
+                copyright: "Copyright (c) 2021 Joel Coddington",
+              });
+            },
+          },
+          { type: "separator" },
+          { role: "services" },
+          { type: "separator" },
+          { role: "hide" },
+          { role: "hideothers" },
+          { role: "unhide" },
+          { type: "separator" },
+          { role: "quit" },
+        ],
+      });
+    }
+
+    if (!isMac) {
+      template.push({
+        label: "Help",
+        submenu: [
+          {
+            label: "About Ascension",
+            click: () => {
+              openAboutWindow({
+                icon_path: path.join(
+                  __dirname,
+                  "src",
+                  "assets",
+                  "ascension.png"
+                ),
+                copyright: "Copyright (c) 2021 Joel Coddington",
+              });
+            },
+          },
+        ],
       });
     }
 
