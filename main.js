@@ -1,11 +1,7 @@
 const path = require("path");
 const url = require("url");
-const { app, BrowserWindow, autoUpdater } = require("electron");
+const { app, BrowserWindow, autoUpdater, dialog } = require("electron");
 const AppMenu = require("./AppMenu");
-
-let mainWindow;
-
-let isDev = false;
 
 // this should be placed at top of main.js to handle setup events quickly
 if (handleSquirrelEvent(app)) {
@@ -13,12 +9,49 @@ if (handleSquirrelEvent(app)) {
   return;
 }
 
+let isDev = false;
+
 if (
   process.env.NODE_ENV !== undefined &&
   process.env.NODE_ENV === "development"
 ) {
   isDev = true;
 }
+
+// AutoUpdater --start
+// AutoUpdates are not configurable on macOS without app signing, so this will only be for Windows
+if (!isDev && process.platform === "win32") {
+  const server = "https://ascension.coddingtonjoel.vercel.app/";
+  const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
+  autoUpdater.setFeedURL(feed);
+
+  setInterval(() => {
+    autoUpdater.checkForUpdates();
+  }, 60000);
+
+  autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
+    const dialogOpts = {
+      type: "info",
+      buttons: ["Restart", "Later"],
+      title: "Application Update",
+      message: process.platform === "win32" ? releaseNotes : releaseName,
+      detail:
+        "A new version has been downloaded. Restart the application to apply the updates.",
+    };
+
+    dialog.showMessageBox(dialogOpts).then((returnValue) => {
+      if (returnValue.response === 0) autoUpdater.quitAndInstall();
+    });
+  });
+
+  autoUpdater.on("error", (message) => {
+    console.error("There was a problem updating the application");
+    console.error(message);
+  });
+}
+// AutoUpdater --end
+
+let mainWindow;
 
 function createMainWindow() {
   mainWindow = new BrowserWindow({
