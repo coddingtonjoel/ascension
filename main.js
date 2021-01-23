@@ -1,7 +1,8 @@
 const path = require("path");
 const url = require("url");
-const { app, BrowserWindow, autoUpdater, dialog } = require("electron");
+const { app, BrowserWindow, dialog } = require("electron");
 const AppMenu = require("./AppMenu");
+const axios = require("axios");
 
 // this should be placed at top of main.js to handle setup events quickly
 if (handleSquirrelEvent(app)) {
@@ -17,39 +18,6 @@ if (
 ) {
   isDev = true;
 }
-
-// AutoUpdater --start
-// AutoUpdates are not configurable on macOS without app signing, so this will only be for Windows
-if (!isDev && process.platform === "win32") {
-  const server = "https://ascension.coddingtonjoel.vercel.app/";
-  const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
-  autoUpdater.setFeedURL(feed);
-
-  setInterval(() => {
-    autoUpdater.checkForUpdates();
-  }, 60000);
-
-  autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
-    const dialogOpts = {
-      type: "info",
-      buttons: ["Restart", "Later"],
-      title: "Application Update",
-      message: process.platform === "win32" ? releaseNotes : releaseName,
-      detail:
-        "A new version has been downloaded. Restart the application to apply the updates.",
-    };
-
-    dialog.showMessageBox(dialogOpts).then((returnValue) => {
-      if (returnValue.response === 0) autoUpdater.quitAndInstall();
-    });
-  });
-
-  autoUpdater.on("error", (message) => {
-    console.error("There was a problem updating the application");
-    console.error(message);
-  });
-}
-// AutoUpdater --end
 
 let mainWindow;
 
@@ -122,6 +90,36 @@ app.on("ready", () => {
   createMainWindow();
 
   new AppMenu(isDev);
+
+  // check for updates
+  const server = "https://ascension.coddingtonjoel.vercel.app/";
+  const feed = `${server}/update/win32/${app.getVersion()}`;
+  setTimeout(() => {
+    axios
+      .get(feed)
+      .then((res) => {
+        if (res.data !== "") {
+          const dialogOpts = {
+            type: "info",
+            buttons: ["Download Update", "Later"],
+            title: "Application Update",
+            message: "New Update for Ascension",
+            detail: `A new version of Ascension has been released.\nCurrent version: ${app.getVersion()}.\nNewer version: ${
+              res.data.name
+            }.`,
+          };
+
+          dialog.showMessageBox(dialogOpts).then((returnValue) => {
+            if (returnValue.response === 0) {
+              require("electron").shell.openExternal(
+                "https://github.com/coddingtonjoel/ascension/releases"
+              );
+            }
+          });
+        }
+      })
+      .catch((err) => console.log(err));
+  }, 3000);
 });
 
 // additional macOS settings for standarization
