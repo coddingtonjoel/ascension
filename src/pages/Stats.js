@@ -122,7 +122,7 @@ const Stats = () => {
 
                             // gather top 5 champions to display images of
                             let topFive = [];
-                            if (masteryData !== []) {
+                            if (masteryData !== [] && masteryData.size >= 5) {
                               for (let i = 0; i < 5; i++) {
                                 topFive.push(masteryData[i]);
                               }

@@ -1,19 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import NumberFormat from "react-number-format";
-import Checkbox from "@material-ui/core/Checkbox";
-import Menu from "@material-ui/core/Menu";
-import Button from "@material-ui/core/Button";
-import FilterIcon from "@material-ui/icons/FilterList";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import MasteryTable from "./MasteryTable";
 
 const Profile = (props) => {

@@ -104,9 +104,9 @@ app.on("ready", () => {
             buttons: ["Download Update", "Later"],
             title: "Application Update",
             message: "New Update for Ascension",
-            detail: `A new version of Ascension has been released.\nCurrent version: v${app.getVersion()}.\nNewer version: ${
+            detail: `A new version of Ascension has been released.\n\nCurrent version: v${app.getVersion()}\nNewer version: ${
               res.data.name
-            }.`,
+            }`,
           };
 
           dialog.showMessageBox(dialogOpts).then((returnValue) => {
@@ -119,7 +119,7 @@ app.on("ready", () => {
         }
       })
       .catch((err) => console.log(err));
-  }, 3000);
+  }, 5000);
 });
 
 // additional macOS settings for standarization
