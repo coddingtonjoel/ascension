@@ -55,14 +55,19 @@ const Stats = () => {
               )
               .then((res) => {
                 console.log(res);
+                // filter out flex & tft ranked data
                 if (res.data.length > 0) {
                   const soloDuoRank = res.data.filter(
                     (queue) => queue.queueType === "RANKED_SOLO_5x5"
                   );
-                  let tier = soloDuoRank[0].tier;
-                  tier = tier.toLowerCase();
-                  tier = tier.charAt(0).toUpperCase() + tier.slice(1);
-                  rank = tier + " " + soloDuoRank[0].rank;
+                  if (soloDuoRank.length !== 0) {
+                    let tier = soloDuoRank[0].tier;
+                    tier = tier.toLowerCase();
+                    tier = tier.charAt(0).toUpperCase() + tier.slice(1);
+                    rank = tier + " " + soloDuoRank[0].rank;
+                  } else {
+                    rank = "Unranked";
+                  }
                 } else {
                   rank = "Unranked";
                 }
@@ -122,11 +127,12 @@ const Stats = () => {
 
                             // gather top 5 champions to display images of
                             let topFive = [];
-                            if (masteryData !== [] && masteryData.size >= 5) {
+                            if (masteryData !== [] && masteryData.length >= 5) {
                               for (let i = 0; i < 5; i++) {
                                 topFive.push(masteryData[i]);
                               }
                             }
+                            console.log(topFive);
 
                             setContent(
                               <Profile
@@ -145,6 +151,7 @@ const Stats = () => {
                       .catch((err) => console.log(err));
                   })
                   .catch((err) => {
+                    console.log(err);
                     let status = err.response.status;
                     if (status === 404) {
                       setContent(<NotFound />);
@@ -157,6 +164,7 @@ const Stats = () => {
                   .catch((err) => console.log(err));
               })
               .catch((err) => {
+                console.log(err);
                 let status = err.response.status;
                 if (status === 404) {
                   setContent(<NotFound />);
@@ -168,6 +176,7 @@ const Stats = () => {
               });
           })
           .catch((err) => {
+            console.log(err);
             let status = err.response.status;
             if (status === 404) {
               setContent(<NotFound />);
